@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>
+			Conversion CSV Extractor
+		</title>
+        <script src = "export_options.js"></script>
+        <script src = "backend.js"></script>
+
+        <style>
+            body
+            {
+                background-color	: #00bfff; /* #16c5ff --> lighter, a bit better contrast with checkboxes */
+                font-family		: Arial;
+                color			: #000000;
+                font-weight		: bold;
+            }
+            .btn
+            {
+                background-color	: #0000FF;
+                font-family		: Arial;
+                font-weight		: Bolder;
+                /*color			: #F0F0F0;*/
+                color			: #FEFFE6;
+                box-shadow      : 2px 2px 2px 1px rgba(0, 0, 0, 0.2); /*drop shadow for buttons*/
+            }
+            .topTable
+            {
+                border-style	: none;
+                vertical-align	: top;
+                align			: left;
+                font-weight		: bold;
+                padding			: 0;
+                margin			: 0;
+            }
+            .header
+            {
+                font-weight		: bolder;
+                font-size		: 1.25em;
+            }
+            .italSmall
+            {
+                font-size		: .75em;
+                font-style		: italic;
+                font-weight		: normal;
+            }
+            .initColor
+            {
+                background-color	: #FFFFFF;
+                width			: 10px;
+            }
+            .FilesDone
+            {
+                font-weight		: bold;
+                color			: #FEFEFE;
+            }
+        </style>	
+    </head>
+    <!-- Renamed these, feel free to change-->
+    <body id="ELECTRONBODY" name="ELECTRONBODY">
+    <form id="CSVELECTRON" name="CSVELECTRON" method="POST">
+    <table id="topTable" class="topTable" name="topTable"> 
+    <!-- Made this a separate table because it was pushing the progress bar way off to the right -->
+    <tr>
+        <td colspan="1">
+            <input type="text" id="fileIn" name="fileIn" size="96" />
+            <input type="hidden" id="fileDirectory" name="fileDirectory" value="">
+            <input type="hidden" id="fileExtension" name="fileExtension" value="">
+        </td>
+        
+    </tr>
+    <tr>
+        <td>
+            <input type="button" id="executor" name="executor" value="Choose Excel File" class="btn" onClick="GetInFile()" />
+        </td>
+        
+    </tr>
+    <tr>
+        <td>
+            &nbsp;
+        </td>
+    </tr>
+    </table>
+    <table id="topTable2" class="topTable" name="topTable2"> 
+    <tr>
+        <td>
+            <table class="topTable">
+                <tr>
+                    <td>
+                        Property Code:
+                    </td>
+                    <td>
+                        <input type="text" name="propCode" id="propCode" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <i class="italSmall">Enter the property code in the form: abc-123</i>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Data Begins at Row:
+                    </td>
+                    <td>
+                        <input type="text" name="firstRow" id="firstRow" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Utility Code:
+                    </td>
+                    <td>
+                        <select name="utilOpt" id="utilOpt">
+                            <option value="r-rubs" selected="selected">r-rubs</option>
+                            <option value="r-util">r-util</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </td>
+        <td>
+            <table class="topTable">
+                <tr>
+                <!--style="background-color:'#FFFFFF';"-->
+                    <td colspan="5">
+                    <!-- style="background-color:'#00BFFF';"-->
+                        <b class="header">Progress:</b>
+                    </td>
+                    <script> //language="JSCRIPT">
+                        var	i	= 1;
+                        for(i=1; i<=18; i++)
+                        {
+                            document.write("<td class='initColor' style='background-color:#FFFFFF;' id='pbar" + i + "'>&nbsp;</td>");
+                        }
+                    </script>
+                </tr>
+            </table>
+            <table class="topTable">
+                <tr rowspan="3">
+                    <td id="statusupdater" name="statusupdater">
+                        &nbsp;
+                    </td>
+                </tr>
+            </table>
+        </td>						
+    </tr>			
+    <tr>
+        <td>
+            &nbsp;
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <b class="header">Export Options Control:</b>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <input type="button" name="exportOpts" id="exportOpts" value="Export All" class="btn" onClick="ExportOptChange()" />
+        </td>
+    </tr>
+    <tr>
+        <td>
+            &nbsp;
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table class="topTable">
+                <tr>
+                    <td>
+                        <b class="header">Export Options:</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="checkbox" id="utype" name="utype" onClick="ResetExportOpts('utype')" />Unit Type?
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="checkbox" id="unit" name="unit" onClick="ResetExportOpts('unit')" />Unit?
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="checkbox" id="person" name="person" onClick="ResetExportOpts('person')" />Person?
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="checkbox" id="tenant" name="tenant" onClick="ResetExportOpts('tenant')" />Tenant?
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="checkbox" id="leasecharge" name="leasecharge" onClick="ResetExportOpts('leasecharge')" />Lease Charges?
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="checkbox" id="demographics" name="demographics" onClick="ResetExportOpts('demographics')" />Demographics?
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="checkbox" id="roommates" name="roommates" onClick="ResetExportOpts('roommates')" />Roommates?
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="checkbox" id="secdeps" name="secdeps" onClick="ResetExportOpts('secdeps')" />Security Deposits?
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <input type="button" id="submitter" name="submitter" value="Create CSVs" class="btn" onClick="FullScript()" />
+        </td>
+    </tr>
+    </table>
+    </form>
+    </body>
+</html>
